@@ -1,11 +1,15 @@
 package com.fs.hcmgmt.repository.datasource
 
 import com.fs.hcmgmt.api.LoginAPI
+import com.fs.hcmgmt.util.SessionManager
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import io.ktor.client.statement.*
 
-class LoginDatasourceImpl(private val loginAPI: LoginAPI) : LoginDatasource {
+class LoginDatasourceImpl(
+    private val loginAPI: LoginAPI,
+    private val sessionManager: SessionManager
+) : LoginDatasource {
     override suspend fun login(username: String, pw: String): HttpResponse {
         TODO("Not yet implemented")
     }
@@ -34,7 +38,7 @@ class LoginDatasourceImpl(private val loginAPI: LoginAPI) : LoginDatasource {
         }
 
         val project = JsonObject().apply {
-            addProperty("name", "eu-west-101")
+            addProperty("name", sessionManager.getZone())
         }
 
         val scope = JsonObject().apply {

@@ -5,5 +5,6 @@ import com.fs.hcmgmt.util.Result
 interface LoginRepository {
     suspend fun login(username: String, pw: String): Result<LoginResult>
     suspend fun loginIAM(username: String, usernameIAM: String, pw: String): Result<LoginResult>
-    fun logout()
+    suspend fun logout(): Boolean
+    suspend fun checkLoginStatus(): Boolean
 }

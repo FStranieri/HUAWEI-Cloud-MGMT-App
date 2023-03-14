@@ -2,6 +2,7 @@ package com.fs.hcmgmt.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.fs.hcmgmt.util.SessionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,11 +12,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class SharedPreferencesModule {
+object SharedPreferencesModule {
 
     @Singleton
     @Provides
     fun provideSharedPreference(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("hcmgmt_pref", Context.MODE_PRIVATE)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSessionManager(sharedPreferences: SharedPreferences): SessionManager {
+        return SessionManager(sharedPreferences)
     }
 }

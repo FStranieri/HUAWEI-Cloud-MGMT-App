@@ -3,6 +3,8 @@ package com.fs.hcmgmt.util
 object Constants {
     const val HEADER_TOKEN = "X-Auth-Token"
     const val PREF_TOKEN = "TOKEN"
+    const val PREF_PROJECT = "PROJECT"
+    const val PREF_ZONE = "ZONE"
 }
 
 enum class ECSOperationMethod(val type: String, val osName: String) {

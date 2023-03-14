@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fs.hcmgmt.data.LoginResult
 import com.fs.hcmgmt.data.QueryECSResult
+import com.fs.hcmgmt.usecase.CheckLoginStatusUseCase
 import com.fs.hcmgmt.usecase.LoginUseCase
+import com.fs.hcmgmt.usecase.LogoutUseCase
 import com.fs.hcmgmt.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val preferences: SharedPreferences
+    private val logoutUseCase: LogoutUseCase,
+    private val checkLoginStatusUseCase: CheckLoginStatusUseCase
 ) : ViewModel() {
 
     private val mState = MutableStateFlow(value = LoginState())
@@ -25,7 +28,18 @@ class LoginViewModel @Inject constructor(
         get() = mState
 
     init {
-        updateState(state.value.copy(loggedIn = preferences.contains(Constants.PREF_TOKEN)))
+        checkLoginStatus()
+    }
+
+    private fun checkLoginStatus() {
+        viewModelScope.launch {
+            mState.emit(
+                value = state.value.copy(
+                    result = Result.Loading(),
+                    loggedIn = checkLoginStatusUseCase.invoke()
+                )
+            )
+        }
     }
 
     fun switchUI(loginAsIAM: Boolean) {
@@ -60,8 +74,14 @@ class LoginViewModel @Inject constructor(
     }
 
     fun logout() {
-        preferences.edit().remove(Constants.PREF_TOKEN).apply()
-        updateState(state.value.copy(result = Result.Loading(), loggedIn = false))
+        viewModelScope.launch {
+            mState.emit(
+                value = state.value.copy(
+                    result = Result.Loading(),
+                    loggedIn = logoutUseCase.invoke()
+                )
+            )
+        }
     }
 
     fun resetFailureOutput() {

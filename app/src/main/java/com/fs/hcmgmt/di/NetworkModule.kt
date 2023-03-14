@@ -1,9 +1,9 @@
 package com.fs.hcmgmt.di
 
-import android.content.SharedPreferences
 import com.fs.hcmgmt.api.ECSAPI
 import com.fs.hcmgmt.api.LoginAPI
 import com.fs.hcmgmt.util.Constants
+import com.fs.hcmgmt.util.SessionManager
 import com.google.gson.JsonObject
 import dagger.Module
 import dagger.Provides
@@ -57,31 +57,29 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideQueryECSApi(httpClient: HttpClient, sharedPreferences: SharedPreferences): ECSAPI {
+    fun provideQueryECSApi(httpClient: HttpClient, sessionManager: SessionManager): ECSAPI {
         return object : ECSAPI {
-            override suspend fun queryECS(projectId: String): HttpResponse {
-                return httpClient.get("https://ecs.eu-west-101.myhuaweicloud.eu/v1/$projectId/cloudservers/detail") {
+            override suspend fun queryECS(): HttpResponse {
+                return httpClient.get("https://ecs.${sessionManager.getZone()}.myhuaweicloud.eu/v1/${sessionManager.getProject()}/cloudservers/detail") {
                     headers {
                         append(HttpHeaders.ContentType, "application/json")
                         append(
-                            Constants.HEADER_TOKEN,
-                            sharedPreferences.getString(Constants.PREF_TOKEN, "") ?: ""
+                            Constants.HEADER_TOKEN, sessionManager.getToken() ?: ""
                         )
                     }
                 }
             }
 
-            override suspend fun getECSDetails(projectId: String, id: String): HttpResponse {
+            override suspend fun getECSDetails(id: String): HttpResponse {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun operationECS(projectId: String, body: JsonObject): HttpResponse {
-                return httpClient.post("https://ecs.eu-west-101.myhuaweicloud.eu/v1/$projectId/cloudservers/action") {
+            override suspend fun operationECS(body: JsonObject): HttpResponse {
+                return httpClient.post("https://ecs.${sessionManager.getZone()}.myhuaweicloud.eu/v1/${sessionManager.getProject()}/cloudservers/action") {
                     headers {
                         append(HttpHeaders.ContentType, "application/json")
                         append(
-                            Constants.HEADER_TOKEN,
-                            sharedPreferences.getString(Constants.PREF_TOKEN, "") ?: ""
+                            Constants.HEADER_TOKEN, sessionManager.getToken() ?: ""
                         )
                     }
                     setBody(body)

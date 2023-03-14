@@ -1,6 +1,5 @@
 package com.fs.hcmgmt.viewmodel
 
-import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fs.hcmgmt.data.ECSTaskResult
@@ -39,9 +38,7 @@ class ECSViewModel @Inject constructor(
         viewModelScope.launch {
             mState.emit(
                 value = state.value.copy(
-                    queryResult = ecsQueryListUseCase.invoke(
-                        "f90b2c5c1c1a42e38215a9edd0b37cf0"
-                    ),
+                    queryResult = ecsQueryListUseCase.invoke(),
                     isRefreshing = false
                 )
             )
@@ -53,7 +50,6 @@ class ECSViewModel @Inject constructor(
             mState.emit(
                 value = state.value.copy(
                     operationResult = ecsOperationUseCase.invoke(
-                        "f90b2c5c1c1a42e38215a9edd0b37cf0",
                         idList,
                         method
                     )

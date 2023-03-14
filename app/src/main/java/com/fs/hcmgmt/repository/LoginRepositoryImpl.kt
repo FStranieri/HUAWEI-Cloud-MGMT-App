@@ -1,17 +1,16 @@
 package com.fs.hcmgmt.repository
 
-import android.content.SharedPreferences
 import com.fs.hcmgmt.data.LoginResult
 import com.fs.hcmgmt.repository.datasource.LoginDatasource
-import com.fs.hcmgmt.util.Constants
 import com.fs.hcmgmt.util.Result
+import com.fs.hcmgmt.util.SessionManager
 import io.ktor.client.call.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 
 class LoginRepositoryImpl(
     private val loginDatasource: LoginDatasource,
-    private val sharedPreferences: SharedPreferences
+    private val sessionManager: SessionManager
 ) :
     LoginRepository {
     override suspend fun login(username: String, pw: String) = responseToRequest(
@@ -23,17 +22,21 @@ class LoginRepositoryImpl(
             loginDatasource.loginIAM(username, usernameIAM, pw)
         )
 
-    override fun logout() {
-        TODO("Not yet implemented")
-    }
+    override suspend fun logout(): Boolean = sessionManager.clearToken()
 
     private suspend fun responseToRequest(response: HttpResponse): Result<LoginResult> {
         if (response.status.isSuccess()) {
             val token: String = response.headers["X-Subject-Token"]!!
-            sharedPreferences.edit().putString(Constants.PREF_TOKEN, token).apply()
-
-            return Result.Success(response.body())
+            sessionManager.putToken(token)
+            val result: Result<LoginResult> = Result.Success(response.body())
+            result.data?.let {
+                sessionManager.putProject(it.token.project.id)
+                sessionManager.putZone(it.token.project.name)
+            }
+            return result
         }
         return Result.Error(response.bodyAsText())
     }
+
+    override suspend fun checkLoginStatus(): Boolean = sessionManager.hasToken()
 }

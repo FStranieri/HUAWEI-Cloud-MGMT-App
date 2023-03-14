@@ -12,19 +12,18 @@ import io.ktor.http.*
 class ECSRepositoryImpl(private val ecsDatasource: ECSDatasource) :
     ECSRepository {
 
-    override suspend fun queryECS(projectId: String): Result<QueryECSResult> {
+    override suspend fun queryECS(): Result<QueryECSResult> {
         return parseECSQueryListResponse(
-            ecsDatasource.queryECS(projectId)
+            ecsDatasource.queryECS()
         )
     }
 
     override suspend fun operationECS(
-        projectId: String,
         idList: List<String>,
         method: ECSOperationMethod
     ): Result<ECSTaskResult> {
         return parseECSTaskResponse(
-            ecsDatasource.operationECS(projectId, idList, method)
+            ecsDatasource.operationECS(idList, method)
         )
     }
 

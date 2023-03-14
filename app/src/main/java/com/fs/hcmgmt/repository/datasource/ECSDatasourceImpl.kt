@@ -7,17 +7,16 @@ import com.google.gson.JsonObject
 import io.ktor.client.statement.*
 
 class ECSDatasourceImpl(private val ecsApi: ECSAPI) : ECSDatasource {
-    override suspend fun queryECS(projectId: String): HttpResponse = ecsApi.queryECS(projectId)
+    override suspend fun queryECS(): HttpResponse = ecsApi.queryECS()
 
-    override suspend fun getECSDetails(projectId: String, id: String): HttpResponse =
-        ecsApi.getECSDetails(projectId, id)
+    override suspend fun getECSDetails(id: String): HttpResponse =
+        ecsApi.getECSDetails(id)
 
     override suspend fun operationECS(
-        projectId: String,
         idList: List<String>,
         method: ECSOperationMethod
     ): HttpResponse =
-        ecsApi.operationECS(projectId, JsonObject().apply {
+        ecsApi.operationECS(JsonObject().apply {
             val servers = JsonArray().apply {
                 idList.forEach { id ->
                     add(JsonObject().apply {

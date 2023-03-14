@@ -78,7 +78,7 @@ class LoginViewModel @Inject constructor(
             mState.emit(
                 value = state.value.copy(
                     result = Result.Loading(),
-                    loggedIn = logoutUseCase.invoke()
+                    loggedIn = !logoutUseCase.invoke()
                 )
             )
         }

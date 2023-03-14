@@ -1,5 +1,6 @@
 package com.fs.hcmgmt.repository
 
+import com.fs.hcmgmt.data.LoginResult
 import com.fs.hcmgmt.repository.datasource.LoginDatasource
 import retrofit2.Response
 import com.fs.hcmgmt.util.Result
@@ -19,7 +20,7 @@ class LoginRepositoryImpl(private val loginDatasource: LoginDatasource) :
         TODO("Not yet implemented")
     }
 
-    private fun responseToRequest(response: Response<String>): Result<String> {
+    private fun responseToRequest(response: Response<LoginResult>): Result<LoginResult> {
         if (response.isSuccessful) {
             response.body()?.let { result ->
                 return Result.Success(result)

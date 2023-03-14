@@ -1,11 +1,14 @@
 package com.fs.hcmgmt.repository.datasource
 
+import androidx.compose.ui.graphics.vector.addPathNodes
 import com.fs.hcmgmt.api.LoginAPI
-import org.json.JSONObject
+import com.fs.hcmgmt.data.LoginResult
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import retrofit2.Response
 
 class LoginDatasourceImpl(private val loginAPI: LoginAPI) : LoginDatasource {
-    override suspend fun login(username: String, pw: String): Response<String> {
+    override suspend fun login(username: String, pw: String): Response<LoginResult> {
         TODO("Not yet implemented")
     }
 
@@ -13,27 +16,29 @@ class LoginDatasourceImpl(private val loginAPI: LoginAPI) : LoginDatasource {
         username: String,
         usernameIAM: String,
         pw: String
-    ): Response<String> = loginAPI.loginIAM (JSONObject().apply{
-        val domain = JSONObject().apply {
-            put("name", username)
+    ): Response<LoginResult> = loginAPI.loginIAM(JsonObject().apply {
+        val domain = JsonObject().apply {
+            addProperty("name", username)
         }
-        val user = JSONObject().apply {
-            put("domain", domain)
-            put("name", usernameIAM)
-            put("password", pw)
+        val user = JsonObject().apply {
+            add("domain", domain)
+            addProperty("name", usernameIAM)
+            addProperty("password", pw)
         }
-        val password = JSONObject().apply {
-            put("user", user)
+        val password = JsonObject().apply {
+            add("user", user)
         }
-        val identity = JSONObject().apply {
-            put("methods", listOf("password"))
-            put("password", password)
-        }
-
-        val auth = JSONObject().apply {
-            put("identity", identity)
+        val identity = JsonObject().apply {
+            add("methods", JsonArray().apply {
+                add("password")
+            })
+            add("password", password)
         }
 
-        put("auth", auth)
+        val auth = JsonObject().apply {
+            add("identity", identity)
+        }
+
+        add("auth", auth)
     })
 }

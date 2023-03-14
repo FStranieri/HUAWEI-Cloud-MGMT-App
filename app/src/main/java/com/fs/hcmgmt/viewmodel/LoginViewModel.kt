@@ -2,6 +2,7 @@ package com.fs.hcmgmt.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fs.hcmgmt.data.LoginResult
 import com.fs.hcmgmt.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,7 +66,7 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
 
     data class LoginState(
         val loginAsIAM: Boolean = false,
-        val result: Result<String> = Result.Loading(),
+        val result: Result<LoginResult> = Result.Loading(),
         val failureOutput: Exception? = null,
         val previousInstanceAlive: Boolean = false
     )

@@ -1,14 +1,12 @@
 package com.fs.hcmgmt.repository.datasource
 
-import androidx.compose.ui.graphics.vector.addPathNodes
 import com.fs.hcmgmt.api.LoginAPI
-import com.fs.hcmgmt.data.LoginResult
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import retrofit2.Response
+import io.ktor.client.statement.*
 
 class LoginDatasourceImpl(private val loginAPI: LoginAPI) : LoginDatasource {
-    override suspend fun login(username: String, pw: String): Response<LoginResult> {
+    override suspend fun login(username: String, pw: String): HttpResponse {
         TODO("Not yet implemented")
     }
 
@@ -16,7 +14,7 @@ class LoginDatasourceImpl(private val loginAPI: LoginAPI) : LoginDatasource {
         username: String,
         usernameIAM: String,
         pw: String
-    ): Response<LoginResult> = loginAPI.loginIAM(JsonObject().apply {
+    ): HttpResponse = loginAPI.loginIAM(JsonObject().apply {
         val domain = JsonObject().apply {
             addProperty("name", username)
         }
@@ -35,8 +33,17 @@ class LoginDatasourceImpl(private val loginAPI: LoginAPI) : LoginDatasource {
             add("password", password)
         }
 
+        val project = JsonObject().apply {
+            addProperty("name", "eu-west-101")
+        }
+
+        val scope = JsonObject().apply {
+            add("project", project)
+        }
+
         val auth = JsonObject().apply {
             add("identity", identity)
+            add("scope", scope)
         }
 
         add("auth", auth)

@@ -1,6 +1,5 @@
 package com.fs.hcmgmt.screen
 
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -12,25 +11,27 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.fs.hcmgmt.R
 import com.fs.hcmgmt.viewmodel.LoginViewModel
 
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel) {
+fun LoginScreen() {
     Column(
         modifier = Modifier.padding(20.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val loginViewModel: LoginViewModel = hiltViewModel()
         val loginState by loginViewModel.state.collectAsState()
 
         val username = remember { mutableStateOf(TextFieldValue()) }
@@ -41,23 +42,27 @@ fun LoginScreen(loginViewModel: LoginViewModel) {
 
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
-            label = { Text(text = "Username") },
+            label = { Text(text = stringResource(R.string.login_username)) },
             value = username.value,
-            onValueChange = { username.value = it })
+            onValueChange = { username.value = it },
+            keyboardOptions = KeyboardOptions(autoCorrect = true)
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         if (loginState.loginAsIAM) {
             TextField(
-                label = { Text(text = "Username IAM") },
+                label = { Text(text = stringResource(R.string.login_username_iam)) },
                 value = usernameIAM.value,
-                onValueChange = { usernameIAM.value = it })
+                onValueChange = { usernameIAM.value = it },
+                keyboardOptions = KeyboardOptions(autoCorrect = true)
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
         }
 
         TextField(
-            label = { Text(text = "Password") },
+            label = { Text(text = stringResource(R.string.login_password)) },
             value = password.value,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -84,13 +89,17 @@ fun LoginScreen(loginViewModel: LoginViewModel) {
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
-                Text(text = "Login")
+                Text(text = stringResource(R.string.login_label_text))
             }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
         ClickableText(
-            text = AnnotatedString(if (loginState.loginAsIAM) "Standard User" else "IAM User"),
+            text = AnnotatedString(
+                if (loginState.loginAsIAM) stringResource(R.string.login_std_user_text) else stringResource(
+                    R.string.login_std_user_iam
+                )
+            ),
             onClick = { loginViewModel.switchUI(!loginState.loginAsIAM) },
             style = TextStyle(
                 fontSize = 14.sp,

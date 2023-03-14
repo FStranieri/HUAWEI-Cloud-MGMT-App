@@ -1,5 +1,6 @@
 package com.fs.hcmgmt.di
 
+import android.content.SharedPreferences
 import com.fs.hcmgmt.api.LoginAPI
 import com.fs.hcmgmt.repository.LoginRepository
 import com.fs.hcmgmt.repository.LoginRepositoryImpl
@@ -15,12 +16,15 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object LoginModule {
     @Provides
-    fun provideLoginDataSource(loginAPI: LoginAPI) : LoginDatasource =
+    fun provideLoginDataSource(loginAPI: LoginAPI): LoginDatasource =
         LoginDatasourceImpl(loginAPI)
 
     @Provides
-    fun provideLoginRepository(loginDatasource: LoginDatasource): LoginRepository =
-        LoginRepositoryImpl(loginDatasource)
+    fun provideLoginRepository(
+        loginDatasource: LoginDatasource,
+        sharedPreferences: SharedPreferences
+    ): LoginRepository =
+        LoginRepositoryImpl(loginDatasource, sharedPreferences)
 
     @Provides
     fun provideLoginUseCase(loginRepository: LoginRepository) =

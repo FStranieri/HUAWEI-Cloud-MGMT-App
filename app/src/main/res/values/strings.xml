@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">HC MGMT</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_ecs_screen">ECS</string>
+    <string name="logout_button_text">logout</string>
+    <string name="ecs_menu_start">start</string>
+    <string name="ecs_menu_stop">stop</string>
+    <string name="ecs_menu_restart">restart</string>
+    <string name="login_username">Username</string>
+    <string name="login_username_iam">Username IAM</string>
+    <string name="login_password">Password</string>
+    <string name="login_std_user_text">Standard User</string>
+    <string name="login_std_user_iam">IAM User</string>
+    <string name="login_label_text">Login</string>
 </resources>
